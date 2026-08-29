@@ -17,6 +17,8 @@
 - `.ai/CURRENT.md` 현재 상태·checkpoint · `.ai/HANDOFF.md` Agent 간 인수인계 · `.ai/LOG.md` 개발자 보고 · `.ai/INBOX.md` 개발자 지시 · `.ai/notes/` 임시 메모 (source of truth 아님)
 - `scripts/ai-start.sh` 시작 절차 안내 · `scripts/ai-end.sh` 종료 점검 · `src/` 구현 · `tests/` 테스트
 
+<!-- src/·tests/는 단일 패키지 기본값이다. backend/frontend/db/infra처럼 구성요소가 여럿이면 초기화 시 이 줄을 구성요소 목록으로 바꾼다 (.ai/BOOTSTRAP.md의 Layout). -->
+
 ## Rules
 
 1. **Memory** — 저장소가 기억이다. 상태·의도·계획·규칙은 파일과 커밋에 남기고, 대화 기억에 의존하지 않는다.
@@ -26,12 +28,12 @@
 5. **Inbox** — `.ai/INBOX.md`의 항목은 사용자의 직접 지시다. 처리한 항목은 삭제하고 결과를 LOG에 적는다. 처리하지 못한 항목은 남기고 이유를 LOG에 적는다.
 6. **Scope** — 현재 Phase `PLAN.md`의 Scope 안에서만 작업한다. Scope 밖 문제는 고치지 말고 HANDOFF의 Known Problems에 적는다. 요청받지 않은 리팩터링·의존성 추가·구조 변경은 먼저 제안한다.
 7. **Spec first** — Spec(PRD·ARCHITECTURE·API)을 바꿔야 하는 작업은 승인 후 spec을 먼저 갱신하고 구현한다. 공개 인터페이스(API·스키마·CLI) 변경은 같은 커밋에서 spec을 갱신한다.
-8. **Verification** — 코드 변경은 test/typecheck/lint를 통과해야 완료다. 새 기능·버그 수정에는 테스트를 같은 커밋에 넣는다. 실행하지 않은 검증을 완료로 적지 않고, 검증 절차는 PLAN의 Validation Plan과 RESULT에 남긴다.
+8. **Verification** — 코드 변경은 test/typecheck/lint를 경고 없이 통과해야 완료다(경고는 실패로 설정한다). 새 기능·버그 수정에는 테스트를 같은 커밋에 넣는다. 실행하지 않은 검증을 완료로 적지 않고, 검증 절차는 PLAN의 Validation Plan과 RESULT에 남긴다.
 9. **Commits** — Task 완료마다 1커밋, 긴 Task는 step마다 WIP 커밋. Agent 커밋에는 `Agent:`·`Task:` trailer(아래 Commit Format). 세션의 마지막은 `.ai/`·docs만 담은 close commit이며, 커밋하지 않은 변경을 남긴 채 세션을 끝내지 않는다. push된 커밋은 rewrite하지 않는다.
 10. **Interruption** — 중단(토큰·시간 소진, 오류)은 언제든 일어난다고 가정한다. Task 시작 시 HANDOFF의 Goal·Work In Progress를 먼저 쓰고(handoff-first), step마다 CURRENT의 Progress를 갱신하며, 큰 변경 전에는 HANDOFF를 먼저 갱신한다. 세션 안에 끝나지 않을 것 같으면 억지로 끝내지 말고 종료 절차로 간다.
 11. **Resume** — 정상 종료 시 CURRENT의 Status를 IN_PROGRESS로 남기지 않는다. 시작 시 IN_PROGRESS를 보면 중단된 세션이다: uncommitted diff가 HANDOFF의 Work In Progress·CURRENT의 Progress와 일치하면 그 step부터 잇고, 아니면 개발자 변경으로 취급한다. 어느 쪽이든 test를 먼저 실행한다.
 12. **Context budget** — 파일은 필요한 부분만 읽고 긴 출력은 요약해서 남긴다. Relevant Source Files는 디렉터리가 아니라 파일·심볼 단위(`src/api/users.py:create_user`)로 적는다. 상한: CURRENT.md 50줄, HANDOFF.md 60줄, LOG 항목 8줄, Progress 10 step, Recent Important Changes 5개.
-13. **Conventions** — 포맷·린트는 도구 설정(`.editorconfig`, <linter/formatter 설정 파일>)을 따르고, 모듈 경계·의존성 방향은 `docs/ARCHITECTURE.md`를 따른다. 비밀값과 생성물은 커밋하지 않는다. <!-- 스택 확정 후 언어별 규칙을 3줄 이내로 추가한다 -->
+13. **Conventions** — 포맷·린트는 도구 설정(`.editorconfig`, <linter/formatter 설정 파일>)을 따르고, 모듈 경계·의존성 방향은 `docs/ARCHITECTURE.md`를 따른다. 정해진 Stack 밖의 언어·런타임 도입은 ADR이 필요하다. 비밀값과 생성물은 커밋하지 않는다. <!-- 스택 확정 후 언어별 규칙을 3줄 이내로 추가한다. 마지막 줄은 허용 언어 목록 (.ai/BOOTSTRAP.md의 Stack Constraints) -->
 14. **Decisions** — 장기 영향이 있는 결정은 `docs/decisions/`에 ADR로 남긴다. `docs/ARCHITECTURE.md`는 현재 구조만 기술하고, 과거 구조와 이유는 ADR에 둔다.
 
 ## Commands

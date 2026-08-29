@@ -23,7 +23,7 @@
 1. 이 저장소를 복제(또는 GitHub의 "Use this template")해 새 프로젝트 저장소를 만든다.
 2. `.ai/BOOTSTRAP.md`의 **Project Description**에 프로젝트 설명을 적는다.
 3. 사용하는 AI Agent에게 `.ai/BOOTSTRAP.md`를 수행하라고 지시한다.
-   Agent가 placeholder를 채우고, 스택·구조 결정을 ADR로 남기고, Phase 계획을 세운 뒤 `BOOTSTRAP.md`를 삭제한다.
+   Agent가 저장소 구성(단일 패키지 / 구성요소별)과 언어별 제약 층(프리셋 기반)을 정하고, placeholder를 채우고, 스택·구조 결정을 ADR로 남기고, Phase 계획을 세운 뒤 `BOOTSTRAP.md`를 삭제한다.
 4. 이후 모든 세션은 `AGENTS.md`의 Rules와 Session Procedure를 따른다.
 
 ## Repository Layout
@@ -48,19 +48,20 @@
 │       ├── _template.md       # ADR 양식
 │       ├── ADR-0001-repository-as-shared-memory.md
 │       ├── ADR-0002-git-checkpoint-and-session-safety.md
-│       └── ADR-0003-rules-vs-procedure-and-context-budget.md
+│       ├── ADR-0003-rules-vs-procedure-and-context-budget.md
+│       └── ADR-0004-executable-constraints-over-prose.md
 ├── .ai/
 │   ├── CURRENT.md             # 현재 Phase·Task·Status·Progress·Last Checkpoint (항상 짧게)
 │   ├── HANDOFF.md             # Agent → 다음 Agent 인수인계 (덮어쓰기)
 │   ├── LOG.md                 # Agent → 개발자 보고 (세션별, 최신순)
 │   ├── INBOX.md               # 개발자 → Agent 지시 (처리 후 삭제)
-│   ├── BOOTSTRAP.md           # 템플릿 → 프로젝트 초기화 절차 (초기화 후 삭제)
+│   ├── BOOTSTRAP.md           # 템플릿 → 프로젝트 초기화 절차 + 언어별 제약 프리셋 (초기화 후 삭제)
 │   └── notes/                 # 임시 조사 메모 (source of truth 아님)
 ├── scripts/
 │   ├── ai-start.sh            # 세션 시작: checkpoint 이후 변경(Agent/개발자 구분), INBOX, 중단 여부, next steps 안내
 │   └── ai-end.sh              # 세션 종료: 커밋·Status·checkpoint·HANDOFF·LOG 점검, 크기 상한 경고
-├── src/                       # 구현
-└── tests/                     # 테스트
+├── src/                       # 구현  (단일 패키지 기본값 — 구성요소가 여럿이면 초기화 시
+└── tests/                     # 테스트  backend/ frontend/ db/ infra/ 같은 디렉터리로 교체)
 ```
 
 ## Agent Entry Points
