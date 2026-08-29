@@ -22,7 +22,7 @@ TODO
 ## Last Checkpoint
 
 <!-- close commit 직전의 HEAD. `scripts/ai-end.sh --set-checkpoint`가 기록한다. -->
-`d7262c3`
+`53e4d9b`
 
 ## Relevant Documents
 
@@ -42,6 +42,7 @@ TODO
 - 2026-08-29 변경 추적·중단 대비·보고 워크플로 추가 (ADR-0002, `scripts/`, `.ai/LOG.md`, `.ai/INBOX.md`)
 - 2026-08-29 규칙·절차 분리, 상태 파일 크기 상한 (ADR-0003)
 - 2026-08-29 언어별 제약 프리셋·Layout 절차 추가 (ADR-0004, BOOTSTRAP.md Stack Constraints)
+- 2026-08-29 푸시 전 검토: 병합 안전장치·close commit 범위·개발자 커밋 경고
 
 ## Next Action
 

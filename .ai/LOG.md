@@ -2,6 +2,15 @@
 
 <!-- 개발자 보고. 세션마다 맨 위에 추가(최신순), 제목은 `## YYYY-MM-DD · <agent> · <phase>/<task> · <한 줄 요약>`, 항목당 8줄 이내. Phase 종료 시 그 Phase의 항목은 삭제(이력은 git log). 상세는 .ai/HANDOFF.md. -->
 
+## 2026-08-29 · claude-cowork · 01/- · 푸시 전 검토 보완
+
+- Commits: `53e4d9b` 병합 안전장치(.gitattributes), close commit 범위 한정, 개발자 커밋 누락 경고, LOG 제목 요약
+- Done: 브랜치 병합 시 LOG union merge·CURRENT/HANDOFF 처리 지침, ai-end.sh가 close commit에 .ai/·docs/phases/·docs/decisions/ 외 변경을 거부, --set-checkpoint 시 이전 checkpoint 이후 개발자 커밋 수 경고
+- Not done: 없음
+- Developer changes: 없음
+- Needs your attention: 커밋 author가 `jjjung0921@users.noreply.github.com`(구형 noreply 형식)이라 GitHub 계정과 연결되는지 확인. 스크립트를 macOS bash에서 한 번 실행 권장. 그 후 `git push -u origin main`
+- Verification: 임시 clone에서 개발자 커밋 0/1개 시나리오로 경고 확인, 문서 상호 참조·Rule 번호 검사
+
 ## 2026-08-29 · claude-cowork · 01/- · 제약 프리셋·Layout
 
 - Commits: `d7262c3` 언어별 제약 프리셋과 유연한 저장소 구성 (BOOTSTRAP Stack Constraints, ADR-0004)
