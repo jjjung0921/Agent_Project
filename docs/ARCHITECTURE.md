@@ -3,13 +3,13 @@
 <!--
 현재 유효한 시스템 구조의 source of truth.
 - "현재" 구조만 기술한다. 과거 구조와 결정 이유는 docs/decisions/(ADR)에 둔다.
-- 구조가 바뀌면 같은 변경에서 이 문서를 갱신한다. 이 문서와 코드가 다르면 AGENTS.md의 Source of Truth 규칙에 따라 inconsistency로 보고한다.
+- 구조가 바뀌면 같은 변경에서 이 문서를 갱신한다. 이 문서와 코드가 다르면 AGENTS.md의 Source of Truth Priority에 따라 inconsistency로 보고한다.
 - 상세 API 계약은 docs/api/에 둔다. 여기서는 참조만 한다.
 - 아직 정해지지 않은 항목은 "TBD (ADR-xxxx 예정)"으로 표시한다.
 -->
 
 - Last updated: <YYYY-MM-DD>
-- Related ADRs: <ADR-0002, ...>
+- Related ADRs: <ADR-0003, ...>
 
 ## System Overview
 

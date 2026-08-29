@@ -34,8 +34,10 @@
 
 ## Tasks
 
+<!-- 완료 시 [x]로 바꾸고 완료 커밋 SHA를 끝에 적는다: (commit abc1234) -->
+
 - [ ] T1. `.ai/BOOTSTRAP.md` 수행 — Done when: BOOTSTRAP의 Output Checklist 전부 충족
-- [ ] T2. 스택·핵심 도구 결정 후 ADR-0002 작성 — Done when: ADR Status가 Accepted
+- [ ] T2. 스택·핵심 도구 결정 후 ADR-0003 작성 — Done when: ADR Status가 Accepted
 - [ ] T3. 프로젝트 초기화 및 도구 설정 — Done when: `AGENTS.md` Commands의 install/test/typecheck/lint가 실제로 성공
 - [ ] T4. 최소 실행 스켈레톤 + 테스트 — Done when: Run 명령이 동작하고 테스트 1개 이상이 통과
 - [ ] T5. (선택) CI에서 test/typecheck/lint 실행 — Done when: 기본 브랜치 push 시 자동 실행

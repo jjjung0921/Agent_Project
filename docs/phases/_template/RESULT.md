@@ -4,10 +4,11 @@
 
 - Completed on: <YYYY-MM-DD>
 - Final Status: DONE | PARTIALLY_DONE | CANCELLED
+- Tag: `phase/NN`
 
 ## Completed
 
-- T1. <무엇이 어떻게 완료되었는가 (관련 커밋/PR)>
+- T1. <무엇이 어떻게 완료되었는가> (commits <abc1234>, <def5678>)
 
 ## Not Completed
 

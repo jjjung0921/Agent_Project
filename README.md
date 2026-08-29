@@ -8,13 +8,15 @@
 ## Design Goals
 
 1. 모든 Agent가 같은 규칙을 공유한다 → 규칙은 `AGENTS.md` 한 곳에만 둔다.
-2. 새 Agent는 최소 context만 읽고 작업을 이어간다 → `AGENTS.md` → `.ai/CURRENT.md` → 지정된 문서만.
+2. 새 Agent는 최소 context만 읽고 작업을 이어간다 → `AGENTS.md` → `.ai/CURRENT.md` → checkpoint 이후 변경 → 지정된 문서만.
 3. 장기 지식(`docs/`)과 단기 작업 상태(`.ai/`)를 분리한다.
 4. 개발은 Phase 단위로 계획하고 검증한다 → `docs/phases/`.
 5. Agent 간 handoff는 파일로 한다 → `.ai/HANDOFF.md`.
-6. 개발자의 직접 수정·결정이 Agent의 판단보다 우선한다.
+6. 개발자의 직접 수정·결정이 Agent의 판단보다 우선한다 → git checkpoint로 자동 감지, `.ai/INBOX.md`로 지시.
 7. Spec(PRD · ARCHITECTURE · API)이 대화보다 높은 source of truth다.
 8. 프로젝트가 커져도 progressive context loading으로 읽는 양을 제한한다.
+9. 세션이 언제 끊겨도 저장소만으로 재개한다 → Progress 체크리스트, WIP 커밋, handoff-first.
+10. 개발자는 `.ai/LOG.md` 맨 위만 읽으면 현황을 안다.
 
 ## How to Use This Template
 
@@ -44,12 +46,18 @@
 │   │       └── PLAN.md
 │   └── decisions/
 │       ├── _template.md       # ADR 양식
-│       └── ADR-0001-repository-as-shared-memory.md
+│       ├── ADR-0001-repository-as-shared-memory.md
+│       └── ADR-0002-git-checkpoint-and-session-safety.md
 ├── .ai/
-│   ├── CURRENT.md             # 현재 Phase·Task·상태·다음 행동 (항상 짧게)
-│   ├── HANDOFF.md             # 세션 종료 시 인수인계 (덮어쓰기)
+│   ├── CURRENT.md             # 현재 Phase·Task·Status·Progress·Last Checkpoint (항상 짧게)
+│   ├── HANDOFF.md             # Agent → 다음 Agent 인수인계 (덮어쓰기)
+│   ├── LOG.md                 # Agent → 개발자 보고 (세션별, 최신순)
+│   ├── INBOX.md               # 개발자 → Agent 지시 (처리 후 삭제)
 │   ├── BOOTSTRAP.md           # 템플릿 → 프로젝트 초기화 절차 (초기화 후 삭제)
 │   └── notes/                 # 임시 조사 메모 (source of truth 아님)
+├── scripts/
+│   ├── ai-start.sh            # 세션 시작 점검: checkpoint 이후 변경(Agent/개발자 구분), INBOX, 중단 여부
+│   └── ai-end.sh              # 세션 종료 점검: 커밋·Status·checkpoint·HANDOFF·LOG 확인
 ├── src/                       # 구현
 └── tests/                     # 테스트
 ```
@@ -61,11 +69,20 @@
 | Codex (CLI / ChatGPT) | `AGENTS.md` | 기본 지원 |
 | Claude Code | `CLAUDE.md` → `AGENTS.md` | `@AGENTS.md` import |
 | Gemini CLI | `GEMINI.md` → `AGENTS.md` | `@./AGENTS.md` import |
-| 웹 채팅(ChatGPT, Claude 등) | `AGENTS.md` + `.ai/CURRENT.md`를 첫 메시지로 전달 | 결과는 사람이 저장소에 반영 |
+| 웹 채팅(ChatGPT, Claude 등) | `AGENTS.md` + `.ai/CURRENT.md` + `scripts/ai-start.sh` 출력을 첫 메시지로 전달 | 결과는 사람이 저장소에 반영하고 trailer를 붙여 커밋 |
 | 기타 도구(Cursor, Copilot 등) | 도구별 설정에서 `AGENTS.md` 참조 | 규칙을 복사하지 않는다 |
 
 ## Workflow at a Glance
 
-- **세션 시작**: `AGENTS.md` → `.ai/CURRENT.md` → `git status` / `git diff` / 최근 log → 현재 Phase `PLAN.md` → 필요한 spec·코드
-- **세션 종료**: test → typecheck → lint → `.ai/CURRENT.md` → `.ai/HANDOFF.md` → Phase Task 갱신 → (필요 시) ADR, `RESULT.md`
+- **세션 시작**: `AGENTS.md` → `.ai/CURRENT.md` → `.ai/HANDOFF.md` → `scripts/ai-start.sh` → (중단된 세션이면 Resume) → 개발자 변경·INBOX 반영 → 현재 Phase `PLAN.md` → HANDOFF 초안 → 구현
+- **작업 중**: step마다 `CURRENT.md` Progress 갱신, 긴 Task는 WIP 커밋
+- **세션 종료**: test → typecheck → lint → 작업 커밋 → `CURRENT.md`(checkpoint) → `HANDOFF.md` → `LOG.md` → `scripts/ai-end.sh` → close commit
 - 상세 규칙, 정보 우선순위, 예외 처리는 `AGENTS.md`가 유일한 기준이다.
+
+## For Developers
+
+- **현황 확인**: `.ai/LOG.md` 맨 위 항목(커밋, 한 일, 확인 요청)을 본다. 더 필요하면 `.ai/HANDOFF.md`, `git log --oneline`.
+- **직접 수정**: 평소처럼 커밋한다(trailer 없이). 다음 Agent가 checkpoint 이후의 커밋과 uncommitted 변경을 개발자 변경으로 감지해 되돌리지 않고 반영한다.
+- **지시 남기기**: `.ai/INBOX.md`에 한 줄 추가한다. Agent가 시작 시 읽고 처리한 뒤 지운다.
+- **특정 작업만 보기**: `git log --grep='Task: 01/T3'`, Phase 단위는 `git tag -l 'phase/*'`.
+- **중단된 세션**: `.ai/CURRENT.md`의 Status가 `IN_PROGRESS`면 세션이 끊긴 것이다. 다음 Agent에게 그대로 시작을 지시하면 Resume 절차를 따른다.

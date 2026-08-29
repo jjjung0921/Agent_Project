@@ -30,7 +30,8 @@ Task는 한 세션(또는 한 PR) 안에 끝나고 독립적으로 검증 가능
 
 ## Tasks
 
-<!-- 상태는 체크박스로 관리한다. 진행 중인 Task는 .ai/CURRENT.md의 Current Task와 일치해야 한다. -->
+<!-- 상태는 체크박스로 관리한다. 진행 중인 Task는 .ai/CURRENT.md의 Current Task와 일치해야 한다.
+완료 시 [x]로 바꾸고 완료 커밋 SHA를 끝에 적는다: `- [x] T1. ... (commit abc1234)` -->
 
 - [ ] T1. <작업> — Done when: <검증 가능한 완료 조건>
 - [ ] T2. <...>

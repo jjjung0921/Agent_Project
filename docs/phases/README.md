@@ -13,5 +13,5 @@
 ## Phase Rules
 
 - 한 Phase는 독립적으로 검증 가능한 하나의 결과를 낸다. 결과를 한 문장으로 말할 수 없으면 나눈다.
-- Phase 종료 조건: PLAN의 Acceptance Criteria 전부 충족 + Validation Plan 수행 + RESULT.md 작성.
+- Phase 종료 조건: PLAN의 Acceptance Criteria 전부 충족 + Validation Plan 수행 + RESULT.md 작성 + `phase/NN` 태그 (`git tag -a phase/01 -m "..."`).
 - 진행 중인 Phase는 하나만 둔다. 순서를 바꿔야 하면 PLAN의 Dependencies를 먼저 확인한다.
