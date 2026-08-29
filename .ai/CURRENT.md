@@ -1,11 +1,6 @@
 # Current State
 
-<!--
-항상 짧게 유지한다. 전체 프로젝트 상태를 복사하지 않는다.
-- step이 끝날 때마다 Progress를, 세션 종료 시 나머지를 갱신한다.
-- Status 값: TODO | IN_PROGRESS | BLOCKED | REVIEW | DONE — 정상 종료 시 IN_PROGRESS로 남기지 않는다.
-  다음 세션이 IN_PROGRESS를 보면 "중단된 세션"으로 판단하고 Resume 절차(AGENTS.md)를 따른다.
--->
+<!-- 50줄 이내. Status: TODO | IN_PROGRESS | BLOCKED | REVIEW | DONE (정상 종료 시 IN_PROGRESS 금지). Progress는 step마다, 나머지는 세션 종료 시 갱신. -->
 
 ## Current Phase
 
@@ -21,14 +16,12 @@ TODO
 
 ## Progress
 
-<!-- 현재 Task의 step 체크리스트. 진행 중인 step 끝에 ← 를 붙인다. Task가 바뀌면 지우고 다시 쓴다. -->
-
+<!-- 현재 Task의 step ≤ 10개. 진행 중인 step 끝에 ← -->
 - (Task 시작 전)
 
 ## Last Checkpoint
 
-<!-- Agent가 마지막으로 처리한 커밋. scripts/ai-start.sh가 이 값 이후의 변경만 보여준다. close commit 직전에 `scripts/ai-end.sh --set-checkpoint`로 HEAD를 기록한다. -->
-
+<!-- close commit 직전의 HEAD. `scripts/ai-end.sh --set-checkpoint`가 기록한다. -->
 `b3db569`
 
 ## Relevant Documents
@@ -36,14 +29,15 @@ TODO
 - `.ai/BOOTSTRAP.md`
 - `docs/phases/01-project-setup/PLAN.md`
 - `docs/phases/README.md`
-- `docs/decisions/ADR-0002-git-checkpoint-and-session-safety.md` (커밋·checkpoint 규칙의 근거)
 
 ## Relevant Source Files
 
+<!-- 디렉터리가 아니라 파일·심볼 단위로: `src/api/users.py:create_user` -->
 - (아직 없음)
 
 ## Recent Important Changes
 
+<!-- 최근 5개만 -->
 - 2026-08-29 템플릿 초기 생성 (ADR-0001). 아직 프로젝트 설명이 반영되지 않았다.
 - 2026-08-29 변경 추적·중단 대비·보고 워크플로 추가 (ADR-0002, `scripts/`, `.ai/LOG.md`, `.ai/INBOX.md`)
 

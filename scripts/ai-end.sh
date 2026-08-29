@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End of Work 점검 — close commit 전에 종료 절차가 지켜졌는지 확인한다.
+# End of Work — close commit 전에 종료 절차와 크기 상한이 지켜졌는지 확인한다.
 #
 # 사용법: scripts/ai-end.sh                   점검만
 #         scripts/ai-end.sh --set-checkpoint  CURRENT.md의 Last Checkpoint를 현재 HEAD로 기록한 뒤 점검
@@ -23,6 +23,10 @@ bad()  { printf '  [FAIL] %s\n' "$1"; fail=1; }
 warn() { printf '  [warn] %s\n' "$1"; }
 section() { sed -n "/^## $2/,/^## /p" "$1" | grep -vE '^(## |<!--|-->|$)' || true; }
 strip_comments() { awk '/<!--/ { c = 1 } !c { print } /-->/ { c = 0 }' "$1"; }
+lines() { wc -l < "$1" | tr -d ' '; }
+count_bullets() { section "$1" "$2" | grep -c '^- ' || true; }
+# cap <label> <value> <max>
+cap() { if [ "${2:-0}" -le "$3" ]; then ok "$1 = $2 (≤ $3)"; else warn "$1 = $2 — 상한 $3 (Rule 12)"; fi; }
 
 if [ "${1:-}" = "--set-checkpoint" ]; then
   awk -v sha="$head_short" '
@@ -41,14 +45,14 @@ other=$(git status --porcelain | cut -c4- | sed 's/.* -> //' | grep -vE '^(\.ai/
 if [ -z "$other" ]; then
   ok "코드 변경이 모두 커밋되어 있다"
 else
-  bad "작업 커밋이 안 된 변경이 있다 (close commit 전에 Commit Policy대로 커밋):"
+  bad "작업 커밋이 안 된 변경이 있다 (close commit 전에 Rule 9대로 커밋):"
   printf '%s\n' "$other" | sed 's/^/           /'
 fi
 
 # 2. Status
 status=$(section "$CURRENT" "Status" | head -n1 | tr -d '[:space:]')
 case "$status" in
-  IN_PROGRESS)              bad "CURRENT.md Status가 IN_PROGRESS다 → TODO / REVIEW / BLOCKED / DONE 중 하나로 바꾼다" ;;
+  IN_PROGRESS)              bad "CURRENT.md Status가 IN_PROGRESS다 → TODO / REVIEW / BLOCKED / DONE 중 하나로 바꾼다 (Rule 11)" ;;
   TODO|REVIEW|BLOCKED|DONE) ok  "CURRENT.md Status = $status" ;;
   *)                        bad "CURRENT.md Status를 읽을 수 없다: '${status:-}'" ;;
 esac
@@ -95,9 +99,17 @@ else
   ok "INBOX 비어 있음"
 fi
 
+# 8. 크기 상한 (Rule 12)
+cap "CURRENT.md 줄 수" "$(lines "$CURRENT")" 50
+cap "HANDOFF.md 줄 수" "$(lines "$HANDOFF")" 60
+top_lines=$(awk '/^## /{ n++ } n == 1 && NF' "$LOG" | grep -vc '^## ' || true)
+cap "LOG 맨 위 항목 줄 수" "${top_lines:-0}" 8
+cap "Progress step 수" "$(count_bullets "$CURRENT" Progress)" 10
+cap "Recent Important Changes 수" "$(count_bullets "$CURRENT" 'Recent Important Changes')" 5
+
 echo
 if [ "$fail" -eq 0 ]; then
-  echo "통과. close commit 예시:"
+  echo "통과. 남은 단계: close commit"
   echo "  git add .ai docs && git commit -m 'docs(ai): close session — <요약>' --trailer 'Agent: <이름>' --trailer 'Task: <phase>/<task>'"
 else
   echo "FAIL 항목을 해결한 뒤 다시 실행한다."

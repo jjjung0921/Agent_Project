@@ -9,7 +9,7 @@
 -->
 
 - Last updated: <YYYY-MM-DD>
-- Related ADRs: <ADR-0003, ...>
+- Related ADRs: <ADR-000N, ...>
 
 ## System Overview
 

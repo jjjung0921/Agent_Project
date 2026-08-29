@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start of Work 점검 — checkpoint 이후의 변경을 Agent/Developer로 구분해 보여준다.
+# Start of Work — checkpoint 이후의 변경을 Agent/Developer로 구분해 보여주고, 상황에 맞는 next steps를 안내한다.
 #
 # 사용법: scripts/ai-start.sh          요약
 #         scripts/ai-start.sh --diff   개발자 커밋의 변경 파일 목록까지 표시
@@ -9,6 +9,7 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 CURRENT=".ai/CURRENT.md"
+HANDOFF=".ai/HANDOFF.md"
 INBOX=".ai/INBOX.md"
 SEP=$'\x1f'
 show_diff=0
@@ -53,7 +54,7 @@ done < <(git log --reverse $limit \
 
 if [ "$dev_count" -gt 0 ]; then
   echo
-  echo "developer commits: ${dev_count}개 — 되돌리지 말 것. diff를 읽고 spec·PLAN·HANDOFF에 반영하고 LOG의 Developer changes에 기록한다."
+  echo "developer commits: ${dev_count}개 — 되돌리지 말 것 (Rule 4)."
   if [ "$show_diff" -eq 1 ]; then
     for sha in $dev_shas; do
       echo "  --- $sha  $(git log -1 --format='%an: %s' "$sha")"
@@ -76,10 +77,12 @@ fi
 
 # --- 4. INBOX ---
 echo
+open_items=0
 if [ -f "$INBOX" ]; then
   open_items=$(grep -c '^- \[ \]' "$INBOX" || true)
-  if [ "${open_items:-0}" -gt 0 ]; then
-    echo "INBOX: 처리할 항목 ${open_items}개 — $INBOX 를 읽고 반영한다 (Source of Truth 1순위)"
+  open_items=${open_items:-0}
+  if [ "$open_items" -gt 0 ]; then
+    echo "INBOX: 처리할 항목 ${open_items}개 — 사용자의 직접 지시 (Rule 5)"
     grep '^- \[ \]' "$INBOX" | sed 's/^/  /'
   else
     echo "INBOX: 비어 있음"
@@ -91,6 +94,7 @@ fi
 # --- 5. CURRENT 상태와 중단 여부 ---
 echo
 phase=$(section "$CURRENT" "Current Phase" | head -n1)
+plan=$(printf '%s' "$phase" | grep -oE '`[^`]+`' | head -n1 | tr -d '`' || true)
 task=$(section "$CURRENT" "Current Task" | head -n1)
 status=$(section "$CURRENT" "Status" | head -n1 | tr -d '[:space:]')
 next=$(section "$CURRENT" "Next Action" | head -n1)
@@ -99,8 +103,40 @@ echo "         task   = ${task:-?}"
 echo "         status = ${status:-?}"
 echo "         next   = ${next:-?}"
 if [ "$status" = "IN_PROGRESS" ]; then
-  echo
-  echo "  → 직전 세션이 정상 종료되지 않았다(중단 가능성). AGENTS.md > Start of Work > Resume 절차를 따른다."
-  echo "    progress:"
+  echo "  → 직전 세션이 정상 종료되지 않았다(중단 가능성). progress:"
   section "$CURRENT" "Progress" | sed 's/^/      /'
 fi
+
+# --- 6. 시작 컨텍스트 크기 (Rule 12) ---
+echo
+files="AGENTS.md $CURRENT $HANDOFF"
+[ -n "$plan" ] && [ -f "$plan" ] && files="$files $plan"
+total=0
+for f in $files; do
+  size=$(wc -c < "$f" | tr -d ' '); total=$((total + size))
+done
+echo "startup context: $(( (total + 512) / 1024 ))KB — $files"
+[ "$total" -gt 25600 ] && echo "  → 25KB 초과. CURRENT/HANDOFF/PLAN을 줄인다 (Rule 12)."
+cur_lines=$(wc -l < "$CURRENT" | tr -d ' ')
+ho_lines=$(wc -l < "$HANDOFF" | tr -d ' ')
+[ "$cur_lines" -gt 50 ] && echo "  → CURRENT.md ${cur_lines}줄 (상한 50)"
+[ "$ho_lines" -gt 60 ] && echo "  → HANDOFF.md ${ho_lines}줄 (상한 60)"
+
+# --- 7. next steps (상황에 따라 달라짐) ---
+echo
+echo "next steps:"
+n=1
+if [ "$status" = "IN_PROGRESS" ]; then
+  echo "  $n. Resume (Rule 11) — uncommitted diff를 HANDOFF의 Work In Progress·위 progress와 대조: 일치하면 그 step부터 잇고, 아니면 개발자 변경으로 취급. 먼저 test 실행."
+  n=$((n + 1))
+fi
+if [ "$dev_count" -gt 0 ] || [ "$open_items" -gt 0 ] || [ -n "$status_out" ]; then
+  echo "  $n. 개발자 변경·INBOX 반영 (Rule 4·5) — 되돌리지 말고 spec·PLAN·HANDOFF에 반영, LOG의 Developer changes에 기록."
+  n=$((n + 1))
+fi
+echo "  $n. ${plan:-현재 Phase PLAN.md}에서 Task·Acceptance Criteria 확인. CURRENT의 Relevant Documents·Source Files만 읽는다."
+n=$((n + 1))
+echo "  $n. CURRENT.md: Status=IN_PROGRESS, Progress에 step 목록(≤10). HANDOFF.md: Goal·Work In Progress 초안 (handoff-first, Rule 10)."
+n=$((n + 1))
+echo "  $n. 구현 — step마다 Progress 갱신, 긴 Task는 WIP 커밋. 끝나면 scripts/ai-end.sh."
+exit 0

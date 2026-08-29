@@ -24,7 +24,7 @@
 2. `.ai/BOOTSTRAP.md`의 **Project Description**에 프로젝트 설명을 적는다.
 3. 사용하는 AI Agent에게 `.ai/BOOTSTRAP.md`를 수행하라고 지시한다.
    Agent가 placeholder를 채우고, 스택·구조 결정을 ADR로 남기고, Phase 계획을 세운 뒤 `BOOTSTRAP.md`를 삭제한다.
-4. 이후 모든 세션은 `AGENTS.md`의 Start of Work / End of Work 절차를 따른다.
+4. 이후 모든 세션은 `AGENTS.md`의 Rules와 Session Procedure를 따른다.
 
 ## Repository Layout
 
@@ -47,7 +47,8 @@
 │   └── decisions/
 │       ├── _template.md       # ADR 양식
 │       ├── ADR-0001-repository-as-shared-memory.md
-│       └── ADR-0002-git-checkpoint-and-session-safety.md
+│       ├── ADR-0002-git-checkpoint-and-session-safety.md
+│       └── ADR-0003-rules-vs-procedure-and-context-budget.md
 ├── .ai/
 │   ├── CURRENT.md             # 현재 Phase·Task·Status·Progress·Last Checkpoint (항상 짧게)
 │   ├── HANDOFF.md             # Agent → 다음 Agent 인수인계 (덮어쓰기)
@@ -56,8 +57,8 @@
 │   ├── BOOTSTRAP.md           # 템플릿 → 프로젝트 초기화 절차 (초기화 후 삭제)
 │   └── notes/                 # 임시 조사 메모 (source of truth 아님)
 ├── scripts/
-│   ├── ai-start.sh            # 세션 시작 점검: checkpoint 이후 변경(Agent/개발자 구분), INBOX, 중단 여부
-│   └── ai-end.sh              # 세션 종료 점검: 커밋·Status·checkpoint·HANDOFF·LOG 확인
+│   ├── ai-start.sh            # 세션 시작: checkpoint 이후 변경(Agent/개발자 구분), INBOX, 중단 여부, next steps 안내
+│   └── ai-end.sh              # 세션 종료: 커밋·Status·checkpoint·HANDOFF·LOG 점검, 크기 상한 경고
 ├── src/                       # 구현
 └── tests/                     # 테스트
 ```
@@ -74,10 +75,10 @@
 
 ## Workflow at a Glance
 
-- **세션 시작**: `AGENTS.md` → `.ai/CURRENT.md` → `.ai/HANDOFF.md` → `scripts/ai-start.sh` → (중단된 세션이면 Resume) → 개발자 변경·INBOX 반영 → 현재 Phase `PLAN.md` → HANDOFF 초안 → 구현
+- **세션 시작**: `AGENTS.md`(자동 로드되면 생략) → `.ai/CURRENT.md` → `.ai/HANDOFF.md` → `scripts/ai-start.sh`의 next steps를 따른다 (Resume 여부, 개발자 변경·INBOX 반영, 현재 PLAN, HANDOFF 초안) → 구현
 - **작업 중**: step마다 `CURRENT.md` Progress 갱신, 긴 Task는 WIP 커밋
-- **세션 종료**: test → typecheck → lint → 작업 커밋 → `CURRENT.md`(checkpoint) → `HANDOFF.md` → `LOG.md` → `scripts/ai-end.sh` → close commit
-- 상세 규칙, 정보 우선순위, 예외 처리는 `AGENTS.md`가 유일한 기준이다.
+- **세션 종료**: test → typecheck → lint → 작업 커밋 → `CURRENT.md`·`HANDOFF.md`·`LOG.md` → `scripts/ai-end.sh --set-checkpoint` → close commit
+- 판단 규칙은 `AGENTS.md`의 Rules 14개가 유일한 기준이고, 절차의 세부 단계는 스크립트 출력이 안내한다. 상태 파일에는 크기 상한이 있다(ADR-0003).
 
 ## For Developers
 
