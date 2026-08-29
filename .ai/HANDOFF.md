@@ -2,19 +2,18 @@
 
 <!-- 60줄 이내. Task 시작 시 Goal·Work In Progress를 먼저 쓰고(handoff-first) 진행하며 갱신, 종료 시 완성. 덮어쓴다(이력은 git log). 모든 항목을 채운다(없으면 "없음"). -->
 
-- From: claude-cowork — 컨텍스트 예산 세션
+- From: claude-cowork — 제약 프리셋 세션
 - Date: 2026-08-29
 - Phase / Task: 01-project-setup / 시작 전 (Task 밖 작업)
 
 ## Goal
 
-Agent가 읽는 컨텍스트가 희석되지 않도록 AGENTS.md를 규칙 중심으로 압축하고, 절차는 스크립트가 안내하며, 상태 파일에 크기 상한을 둔다.
+언어·저장소 구성이 무엇이든 같은 수준의 제약이 걸리도록, 계약은 Phase 01 AC로 고정하고 언어별 프리셋과 Layout 절차를 BOOTSTRAP.md에 둔다.
 
 ## Work Completed
 
-- `AGENTS.md` 139줄 → 59줄 (Rules 14개, Session Procedure, Commit Format) — 커밋 `21d707d`
-- `scripts/ai-start.sh`: 상황별 next steps, startup context 크기·상한 경고 / `scripts/ai-end.sh`: 상한 경고 5종
-- `.ai/` 주석 축소, CURRENT.md에 Source Files 파일·심볼 단위 지침, ADR-0003 작성
+- `.ai/BOOTSTRAP.md` Stack Constraints 절(Layout → Preset → AGENTS.md → PLAN T3, 프리셋 10종, Weak types, Polyglot) — 커밋 `d7262c3`
+- `AGENTS.md` Rule 8·13 보강, Repository Map의 src/·tests/ 기본값 주석 / Phase 01 PLAN T3·T5·AC2·AC6·AC7 / README / ADR-0004
 
 ## Work In Progress
 
@@ -22,23 +21,21 @@ Agent가 읽는 컨텍스트가 희석되지 않도록 AGENTS.md를 규칙 중�
 
 ## Files Changed
 
-- `21d707d` 참조 (`git show --stat 21d707d`)
+- `d7262c3` 참조 (`git show --stat d7262c3`)
 
 ## Decisions Made
 
-- 규칙(AGENTS.md)과 절차(스크립트 출력)를 분리. AGENTS.md 분할이나 요약 파일은 만들지 않는다 — ADR-0003
-- 상한: CURRENT 50줄, HANDOFF 60줄, LOG 항목 8줄, Progress 10 step, Recent Changes 5개, 시작 컨텍스트 25KB 경고
-- ADR 번호 참조는 "다음 번호"로 일반화해 템플릿 수정 시 번호 churn을 없앤다
+- 계약(경고 없이 통과하는 4개 명령, 버전 고정·lockfile·설정 파일, 언어 규칙 ≤ 3줄 + 허용 목록, CI)은 PLAN AC로 고정, 도구·구성은 자유 — ADR-0004
+- 루트 src/·tests/는 단일 패키지 기본값. 구성요소가 여럿이면 삭제하고 구성요소 디렉터리 + 루트 Makefile/justfile로 Commands를 묶는다
+- 프리셋은 초기화 후 삭제되는 BOOTSTRAP.md에만 둔다 (AGENTS.md 컨텍스트 예산 유지)
 
 ## Tests Executed
 
-- 임시 clone에서 `scripts/ai-start.sh`(정상·IN_PROGRESS·개발자 커밋), `scripts/ai-end.sh`(상한 초과 경고, FAIL 검출)
-- 문서 상호 참조·README 트리·Rule 번호 참조 검사, openapi.yaml 파싱
+- 문서 상호 참조·README 트리·Rule/AC 번호 참조 검사, openapi.yaml 파싱, 스크립트 문법 검사
 
 ## Test Results
 
-- 모두 기대대로 동작. 시작 컨텍스트 18KB → 14KB
-- 스크립트는 Linux bash 5에서만 실행 (bash 3.2 호환 문법 사용, macOS 미검증)
+- 문제 없음. 프리셋의 명령·옵션은 문서상 확인만 했고 각 언어 툴체인에서 실제 실행하지는 않았다(초기화 T3에서 검증)
 
 ## Known Problems
 
@@ -48,6 +45,7 @@ Agent가 읽는 컨텍스트가 희석되지 않도록 AGENTS.md를 규칙 중�
 
 - 프로젝트 설명이 아직 없다. 스택·배포 형태·API 유무는 `.ai/BOOTSTRAP.md` 수행 시 결정한다.
 - 개발자 git이 `--trailer`(2.32+)를 지원한다고 가정한다.
+- 프리셋의 도구 버전·옵션(예: ruff `[tool.ruff.lint]`, Gradle `dependencyLocking`)은 2026-08 기준이며 초기화 시점에 재확인이 필요하다.
 
 ## Exact Next Action
 
