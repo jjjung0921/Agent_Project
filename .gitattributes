@@ -1,0 +1,6 @@
+# 줄 끝 정규화 (Windows 협업자 대비)
+* text=auto eol=lf
+*.sh text eol=lf
+
+# 세션 로그는 맨 위 추가 방식이라 브랜치 병합 시 양쪽을 합친다
+.ai/LOG.md merge=union

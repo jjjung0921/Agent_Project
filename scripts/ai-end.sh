@@ -13,6 +13,7 @@ CURRENT=".ai/CURRENT.md"
 HANDOFF=".ai/HANDOFF.md"
 LOG=".ai/LOG.md"
 INBOX=".ai/INBOX.md"
+SEP=$'\x1f'
 today=$(date +%F)
 head_short=$(git rev-parse --short HEAD)
 head_full=$(git rev-parse HEAD)
@@ -29,6 +30,12 @@ count_bullets() { section "$1" "$2" | grep -c '^- ' || true; }
 cap() { if [ "${2:-0}" -le "$3" ]; then ok "$1 = $2 (≤ $3)"; else warn "$1 = $2 — 상한 $3 (Rule 12)"; fi; }
 
 if [ "${1:-}" = "--set-checkpoint" ]; then
+  # 이전 checkpoint 이후 이 세션 범위에 개발자 커밋이 있었다면 LOG에 기록했는지 상기시킨다 (세션 중 pull로 들어온 커밋 포함)
+  old=$(section "$CURRENT" "Last Checkpoint" | grep -oE '^`[0-9a-f]{7,40}`$' | head -n1 | tr -d '`' || true)
+  if [ -n "$old" ] && git cat-file -e "${old}^{commit}" 2>/dev/null; then
+    dev_in_range=$(git log --format="%h${SEP}%(trailers:key=Agent,valueonly,separator=%x2C)" "${old}..HEAD" -- | awk -v FS="$SEP" '$2 == "" { n++ } END { print n + 0 }')
+    [ "$dev_in_range" -gt 0 ] && echo "  [warn] 이전 checkpoint($old) 이후 개발자 커밋 ${dev_in_range}개 — LOG의 Developer changes에 반영했는지 확인 (Rule 4)"
+  fi
   awk -v sha="$head_short" '
     /^## Last Checkpoint/            { insec = 1; print; next }
     insec && /^## /                  { insec = 0 }
@@ -40,8 +47,8 @@ fi
 
 echo "end-of-work check (HEAD $head_short, $today)"
 
-# 1. 작업 커밋: .ai/, docs/ 밖의 uncommitted 변경은 close commit에 섞이면 안 된다
-other=$(git status --porcelain | cut -c4- | sed 's/.* -> //' | grep -vE '^(\.ai/|docs/)' || true)
+# 1. 작업 커밋: close commit에 들어갈 수 있는 것은 .ai/, docs/phases/, docs/decisions/ 뿐이다
+other=$(git status --porcelain | cut -c4- | sed 's/.* -> //' | grep -vE '^(\.ai/|docs/phases/|docs/decisions/)' || true)
 if [ -z "$other" ]; then
   ok "코드 변경이 모두 커밋되어 있다"
 else
@@ -110,7 +117,7 @@ cap "Recent Important Changes 수" "$(count_bullets "$CURRENT" 'Recent Important
 echo
 if [ "$fail" -eq 0 ]; then
   echo "통과. 남은 단계: close commit"
-  echo "  git add .ai docs && git commit -m 'docs(ai): close session — <요약>' --trailer 'Agent: <이름>' --trailer 'Task: <phase>/<task>'"
+  echo "  git add .ai docs/phases docs/decisions && git commit -m 'docs(ai): close session — <요약>' --trailer 'Agent: <이름>' --trailer 'Task: <phase>/<task>'"
 else
   echo "FAIL 항목을 해결한 뒤 다시 실행한다."
   exit 1
