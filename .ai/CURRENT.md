@@ -29,13 +29,14 @@ TODO
 
 <!-- Agent가 마지막으로 처리한 커밋. scripts/ai-start.sh가 이 값 이후의 변경만 보여준다. close commit 직전에 `scripts/ai-end.sh --set-checkpoint`로 HEAD를 기록한다. -->
 
-`<sha>`
+`b3db569`
 
 ## Relevant Documents
 
 - `.ai/BOOTSTRAP.md`
 - `docs/phases/01-project-setup/PLAN.md`
 - `docs/phases/README.md`
+- `docs/decisions/ADR-0002-git-checkpoint-and-session-safety.md` (커밋·checkpoint 규칙의 근거)
 
 ## Relevant Source Files
 
@@ -44,6 +45,7 @@ TODO
 ## Recent Important Changes
 
 - 2026-08-29 템플릿 초기 생성 (ADR-0001). 아직 프로젝트 설명이 반영되지 않았다.
+- 2026-08-29 변경 추적·중단 대비·보고 워크플로 추가 (ADR-0002, `scripts/`, `.ai/LOG.md`, `.ai/INBOX.md`)
 
 ## Next Action
 
