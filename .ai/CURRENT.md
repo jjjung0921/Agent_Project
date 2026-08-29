@@ -22,7 +22,7 @@ TODO
 ## Last Checkpoint
 
 <!-- close commit 직전의 HEAD. `scripts/ai-end.sh --set-checkpoint`가 기록한다. -->
-`b3db569`
+`21d707d`
 
 ## Relevant Documents
 
@@ -40,6 +40,7 @@ TODO
 <!-- 최근 5개만 -->
 - 2026-08-29 템플릿 초기 생성 (ADR-0001). 아직 프로젝트 설명이 반영되지 않았다.
 - 2026-08-29 변경 추적·중단 대비·보고 워크플로 추가 (ADR-0002, `scripts/`, `.ai/LOG.md`, `.ai/INBOX.md`)
+- 2026-08-29 규칙·절차 분리, 상태 파일 크기 상한 (ADR-0003)
 
 ## Next Action
 

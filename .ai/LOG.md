@@ -4,6 +4,15 @@
 
 ## 2026-08-29 · claude-cowork · 01/-
 
+- Commits: `21d707d` 규칙·절차 분리와 컨텍스트 예산 (AGENTS.md 59줄, 스크립트 next steps·상한 경고, ADR-0003)
+- Done: AGENTS.md Rules 14개로 압축, ai-start.sh 상황별 안내·시작 컨텍스트 크기(18KB→14KB), ai-end.sh 상한 경고, .ai 주석 축소, Source Files 파일·심볼 단위
+- Not done: 없음
+- Developer changes: 없음
+- Needs your attention: macOS 기본 bash에서 `scripts/ai-start.sh` 실행 확인 권장. push 미실행 (`git push -u origin main`)
+- Verification: 임시 clone에서 IN_PROGRESS·개발자 커밋·상한 초과 시나리오로 스크립트 출력 확인, 문서 상호 참조·Rule 번호 참조 검사
+
+## 2026-08-29 · claude-cowork · 01/-
+
 - Commits: `b3db569` 변경 추적·중단 대비·보고 워크플로 추가 (AGENTS.md, `.ai/LOG.md`·`INBOX.md`, `scripts/`, ADR-0002)
 - Done: checkpoint 기반 개발자 변경 감지, Task 단위 + WIP 커밋과 trailer 규칙, Progress·handoff-first·Resume 절차, LOG/INBOX 채널, `ai-start.sh`·`ai-end.sh`
 - Not done: 없음
