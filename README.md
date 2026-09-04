@@ -57,6 +57,8 @@
 │   ├── INBOX.md               # 개발자 → Agent 지시 (처리 후 삭제)
 │   ├── BOOTSTRAP.md           # 템플릿 → 프로젝트 초기화 절차 + 언어별 제약 프리셋 (초기화 후 삭제)
 │   └── notes/                 # 임시 조사 메모 (source of truth 아님)
+├── .claude/
+│   └── agent-memory/          # 역할별(be-architect·fe-architect…) 프로젝트 전용 메모리 — 엔진 공유, 커밋 대상 (README 참고)
 ├── scripts/
 │   ├── ai-start.sh            # 세션 시작: checkpoint 이후 변경(Agent/개발자 구분), INBOX, 중단 여부, next steps 안내
 │   └── ai-end.sh              # 세션 종료: 커밋·Status·checkpoint·HANDOFF·LOG 점검, 크기 상한 경고

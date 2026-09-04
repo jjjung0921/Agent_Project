@@ -17,7 +17,7 @@ Thumbs.db
 tmp/
 .cache/
 
-# Agent-local settings (공유 대상 아님)
+# Agent-local settings (공유 대상 아님) — .claude/agent-memory/ 는 프로젝트 지식이므로 추적한다
 .claude/settings.local.json
 
 # Stack-specific: 템플릿 초기화 시 추가한다 (예: node_modules/, dist/, __pycache__/, .venv/, target/)

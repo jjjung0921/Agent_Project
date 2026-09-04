@@ -16,8 +16,17 @@
 - `docs/PRD.md` 요구사항 · `docs/ARCHITECTURE.md` 현재 구조 · `docs/api/` API spec · `docs/decisions/` ADR · `docs/phases/` Phase 계획/결과
 - `.ai/CURRENT.md` 현재 상태·checkpoint · `.ai/HANDOFF.md` Agent 간 인수인계 · `.ai/LOG.md` 개발자 보고 · `.ai/INBOX.md` 개발자 지시 · `.ai/notes/` 임시 메모 (source of truth 아님)
 - `scripts/ai-start.sh` 시작 절차 안내 · `scripts/ai-end.sh` 종료 점검 · `src/` 구현 · `tests/` 테스트
+- `.claude/agent-memory/<역할>/` 전문 역할(be-architect·fe-architect 등)의 프로젝트 전용 메모리 — 아래 **Role Memory**
 
 <!-- src/·tests/는 단일 패키지 기본값이다. backend/frontend/db/infra처럼 구성요소가 여럿이면 초기화 시 이 줄을 구성요소 목록으로 바꾼다 (.ai/BOOTSTRAP.md의 Layout). -->
+
+## Role Memory
+
+전문 역할(be-architect·fe-architect·project-* 등 `~/.agents/agents/`의 역할)로 작업할 때는 그 역할의 프로젝트 전용 메모리 `.claude/agent-memory/<역할>/`를 쓴다. 어느 엔진이든 같은 폴더를 공유한다.
+
+- **Claude Code**: `memory: project` 서브에이전트가 `MEMORY.md`를 자동 로드하고 스스로 갱신한다.
+- **서브에이전트 메모리가 없는 엔진(Codex 등)**: 역할 스킬(`~/.codex/skills/<역할>/`)을 시작할 때 `.claude/agent-memory/<역할>/MEMORY.md`를 직접 읽고(없으면 첫 실행 — 시딩), 끝낼 때 `agent-memory-protocol` 스킬 절차(재도출 불가 사실만 누적 → 인덱스 갱신)로 갱신한다. Gemini는 읽지 않는다.
+- 내용은 레포에서 다시 얻을 수 없는 것만 — 결정 이유·기각 대안·개발자 교정·반복 실패·산출물 인덱스. 커밋 대상이지만 source of truth가 아니다(Truth 순서 ⑩과 같은 급, spec·ADR이 우선). 개발자는 읽되 손으로 고치지 않고, 틀리면 `.ai/INBOX.md`로 지시한다.
 
 ## Rules
 
