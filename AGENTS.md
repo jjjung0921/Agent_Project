@@ -13,9 +13,9 @@
 
 ## Repository Map
 
-- `docs/PRD.md` 요구사항 · `docs/ARCHITECTURE.md` 현재 구조 · `docs/api/` API spec · `docs/decisions/` ADR · `docs/phases/` Phase 계획/결과
+- `docs/PRD.md` 요구사항 · `docs/ARCHITECTURE.md` 현재 구조 · `docs/api/` API spec · `docs/decisions/` ADR · `docs/phases/` Phase 계획/결과 · 추적 표(PRD FR/NFR → Task `Refs:`, `scripts/ai-trace.sh` 생성)
 - `.ai/CURRENT.md` 현재 상태·checkpoint · `.ai/HANDOFF.md` Agent 간 인수인계 · `.ai/LOG.md` 개발자 보고 · `.ai/INBOX.md` 개발자 지시 · `.ai/notes/` 임시 메모 (source of truth 아님)
-- `scripts/ai-start.sh` 시작 절차 안내 · `scripts/ai-end.sh` 종료 점검 · `src/` 구현 · `tests/` 테스트
+- `scripts/ai-start.sh` 시작 절차 안내 · `scripts/ai-end.sh` 종료 점검 · `scripts/ai-trace.sh` 추적 표 생성/검사 · `src/` 구현 · `tests/` 테스트
 - `.claude/agent-memory/<역할>/` 전문 역할(be-architect·fe-architect 등)의 프로젝트 전용 메모리 — 아래 **Role Memory**
 
 <!-- src/·tests/는 단일 패키지 기본값이다. backend/frontend/db/infra처럼 구성요소가 여럿이면 초기화 시 이 줄을 구성요소 목록으로 바꾼다 (.ai/BOOTSTRAP.md의 Layout). -->

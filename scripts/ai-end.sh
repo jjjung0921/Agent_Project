@@ -114,6 +114,11 @@ cap "LOG 맨 위 항목 줄 수" "${top_lines:-0}" 8
 cap "Progress step 수" "$(count_bullets "$CURRENT" Progress)" 10
 cap "Recent Important Changes 수" "$(count_bullets "$CURRENT" 'Recent Important Changes')" 5
 
+# 9. 파생 표: docs/phases/README.md 추적 표 = PLAN Task 줄의 Refs
+if grep -q '<!-- trace:begin -->' docs/phases/README.md 2>/dev/null; then
+  if bash scripts/ai-trace.sh --check >/dev/null 2>&1; then ok "docs/phases/README.md 추적 표 = PLAN Refs"; else bad "추적 표가 PLAN Refs와 다르다 → scripts/ai-trace.sh"; fi
+fi
+
 echo
 if [ "$fail" -eq 0 ]; then
   echo "통과. 남은 단계: close commit"
