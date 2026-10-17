@@ -119,6 +119,26 @@ if grep -q '<!-- trace:begin -->' docs/phases/README.md 2>/dev/null; then
   if bash scripts/ai-trace.sh --check >/dev/null 2>&1; then ok "docs/phases/README.md 추적 표 = PLAN Refs"; else bad "추적 표가 PLAN Refs와 다르다 → scripts/ai-trace.sh"; fi
 fi
 
+# 10. PRD ID 추적: usecases.md·PLAN·ADR의 인용이 PRD에 실재하고, FR×UC 행렬·usecases.lock.json이 PRD와 맞는다
+prd=docs/PRD.md; [ -d docs/prd ] && prd=docs/prd
+if [ -e "$prd" ] && [ -f scripts/prd_trace.py ]; then
+  if ! command -v python3 >/dev/null 2>&1; then
+    warn "python3 없음 — PRD ID 추적 검사(scripts/prd_trace.py) 생략"
+  else
+    rc=0; out=$(python3 scripts/prd_trace.py "$prd" --check 2>&1) || rc=$?
+    summary=$(printf '%s\n' "$out" | grep '^결론:' || true)
+    case "$rc" in
+      0) ok "PRD ID 추적 — ${summary#결론: }" ;;
+      2) warn "PRD가 usecases.lock.json 기준과 다르다 — 아래 UC를 다시 그린 뒤 scripts/prd_trace.py $prd --write"
+         printf '%s\n' "$out" | grep '^STALE' | sed 's/^/           /' ;;
+      *) bad "PRD ID 추적 FAIL → python3 scripts/prd_trace.py $prd --check"
+         fl=$(printf '%s\n' "$out" | grep -E '^(FAIL|    )' || true)
+         printf '%s\n' "$fl" | head -n 20 | sed 's/^/           /'
+         n=$(printf '%s\n' "$fl" | wc -l | tr -d ' '); [ "$n" -gt 20 ] && echo "           … 외 $((n - 20))줄" ;;
+    esac
+  fi
+fi
+
 echo
 if [ "$fail" -eq 0 ]; then
   echo "통과. 남은 단계: close commit"
