@@ -14,6 +14,7 @@
 ## Repository Map
 
 - `docs/PRD.md` 요구사항 · `docs/ARCHITECTURE.md` 현재 구조 · `docs/api/` API spec · `docs/decisions/` ADR · `docs/phases/` Phase 계획/결과 · 추적 표(PRD FR/NFR → Task `Refs:`, `scripts/ai-trace.sh` 생성)
+- `track/plan.md` 우측 트랙 보드의 Phase 목록. Task 완료 상태는 `docs/phases/{phase}/PLAN.md` 체크박스가 원본이며 새 Phase를 추가할 때 track에 링크 행을 추가한다.
 - `.ai/CURRENT.md` 현재 상태·checkpoint · `.ai/HANDOFF.md` Agent 간 인수인계 · `.ai/LOG.md` 개발자 보고 · `.ai/INBOX.md` 개발자 지시 · `.ai/notes/` 임시 메모 (source of truth 아님)
 - `scripts/ai-start.sh` 시작 절차 안내 · `scripts/ai-end.sh` 종료 점검 · `scripts/ai-trace.sh` 추적 표 생성/검사 · `scripts/prd_trace.py` PRD ID 인용 검사·FR×UC 행렬 생성(prd-writing 원본의 복사본) · `src/` 구현 · `tests/` 테스트
 - `.claude/agent-memory/<역할>/` 전문 역할(be-architect·fe-architect 등)의 프로젝트 전용 메모리 — 아래 **Role Memory**

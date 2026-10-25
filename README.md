@@ -10,7 +10,7 @@
 1. 모든 Agent가 같은 규칙을 공유한다 → 규칙은 `AGENTS.md` 한 곳에만 둔다.
 2. 새 Agent는 최소 context만 읽고 작업을 이어간다 → `AGENTS.md` → `.ai/CURRENT.md` → checkpoint 이후 변경 → 지정된 문서만.
 3. 장기 지식(`docs/`)과 단기 작업 상태(`.ai/`)를 분리한다.
-4. 개발은 Phase 단위로 계획하고 검증한다 → `docs/phases/`.
+4. 개발은 Phase 단위로 계획하고 검증한다 → `docs/phases/`. `track/plan.md`는 우측 트랙 보드의 Phase 목록이며, Task 진행률은 연결된 Phase PLAN 체크박스에서 읽는다.
 5. Agent 간 handoff는 파일로 한다 → `.ai/HANDOFF.md`.
 6. 개발자의 직접 수정·결정이 Agent의 판단보다 우선한다 → git checkpoint로 자동 감지, `.ai/INBOX.md`로 지시.
 7. Spec(PRD · ARCHITECTURE · API)이 대화보다 높은 source of truth다.
@@ -34,6 +34,8 @@
 ├── CLAUDE.md                  # Claude Code 진입점 → @AGENTS.md
 ├── GEMINI.md                  # Gemini CLI 진입점 → @./AGENTS.md
 ├── README.md
+├── track/
+│   └── plan.md               # 우측 트랙 보드 (Phase PLAN 체크박스에서 진행률 계산)
 ├── docs/
 │   ├── PRD.md                 # 제품 요구사항 (무엇을, 왜)
 │   ├── ARCHITECTURE.md        # 현재 architecture (과거 구조·이유는 ADR로)

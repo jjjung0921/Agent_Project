@@ -21,3 +21,4 @@ tmp/
 .claude/settings.local.json
 
 # Stack-specific: 템플릿 초기화 시 추가한다 (예: node_modules/, dist/, __pycache__/, .venv/, target/)
+.cross-window/
